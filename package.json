@@ -1,0 +1,6 @@
+{
+  "name": "digital-twin-os-demo",
+  "private": true,
+  "type": "module",
+  "description": "Interactive public demo of Digital Twin OS. All content is fictional."
+}

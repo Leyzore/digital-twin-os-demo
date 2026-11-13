@@ -180,7 +180,16 @@ export function createTower(app) {
         g.addColorStop(0, col + "cc"); g.addColorStop(0.3, col + "44"); g.addColorStop(1, col + "00");
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 7, 0, 6.3); ctx.fill();
         ctx.fillStyle = p.big ? "#fff" : col; ctx.beginPath(); ctx.arc(x, y, r * 0.75, 0, 6.3); ctx.fill();
-        ctx.font = "600 10.5px Manrope, system-ui, sans-serif"; ctx.fillStyle = "rgba(236,210,250,0.85)"; ctx.textAlign = "center"; ctx.fillText(p.f.title.toUpperCase(), x, y + r + 16);
+      });
+      // labels: biggest node first, kept inside the panel, skipped when they would collide
+      ctx.font = `600 ${mobile ? 9.5 : 10.5}px Manrope, system-ui, sans-serif`; ctx.fillStyle = "rgba(236,210,250,0.9)"; ctx.textAlign = "center";
+      const placed = [];
+      [...pts].sort((a, b) => (b.big ? 1 : 0) - (a.big ? 1 : 0)).forEach((p) => {
+        const [x, y] = P(p), r = p.big ? 11 : 6.5, text = p.f.title.toUpperCase(), tw = ctx.measureText(text).width;
+        const cx = Math.min(Math.max(x, tw / 2 + 8), w - tw / 2 - 8), ly = y + r + 16;
+        const box = [cx - tw / 2 - 4, ly - 8, cx + tw / 2 + 4, ly + 8];
+        if (placed.some((q) => box[0] < q[2] && box[2] > q[0] && box[1] < q[3] && box[3] > q[1])) return;
+        placed.push(box); ctx.fillText(text, cx, ly);
       });
     };
     const ro = new ResizeObserver(() => { w = 0; }); ro.observe(panel);
